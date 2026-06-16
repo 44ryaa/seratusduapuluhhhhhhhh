@@ -1,0 +1,1314 @@
+/* ==========================================================================
+   CSS GLOBAL TOKENS & SYSTEM RESETS
+   ========================================================================== */
+:root {
+  /* Color Palettes per Weather/Time of Day */
+  /* Morning (Pagi) */
+  --morning-sky-top: #ff9a9e;
+  --morning-sky-bottom: #fecfef;
+  --morning-grass-light: #78e08f;
+  --morning-grass-dark: #38a169;
+  --morning-light: rgba(255, 234, 167, 0.45);
+  
+  /* Sunny Day (Siang) */
+  --sunny-sky-top: #4a90e2;
+  --sunny-sky-bottom: #a3e0f9;
+  --sunny-grass-light: #a8e6cf;
+  --sunny-grass-dark: #2ed573;
+  --sunny-light: rgba(255, 255, 255, 0.2);
+
+  /* Sunset (Sore) */
+  --sunset-sky-top: #6c5ce7;
+  --sunset-sky-mid: #fd79a8;
+  --sunset-sky-bottom: #ffbe76;
+  --sunset-grass-light: #e1b12c;
+  --sunset-grass-dark: #b8860b;
+  --sunset-light: rgba(225, 112, 85, 0.4);
+
+  /* Night (Malam) */
+  --night-sky-top: #0b091a;
+  --night-sky-bottom: #1c1b35;
+  --night-grass-light: #1b4d3e;
+  --night-grass-dark: #0f2a1d;
+  --night-light: rgba(14, 18, 58, 0.7);
+
+  /* Shared Theme Colors */
+  --wood-light: #d8a27d;
+  --wood-dark: #7a431d;
+  --wood-border: #522709;
+  --heart-color: #ff7675;
+  --text-dark: #2d3436;
+  --text-light: #f5f6fa;
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(255, 255, 255, 0.4);
+  
+  /* Active values (dynamically overwritten by JS if needed, starts at morning) */
+  --sky-top: var(--morning-sky-top);
+  --sky-bottom: var(--morning-sky-bottom);
+  --grass-light: var(--morning-grass-light);
+  --grass-dark: var(--morning-grass-dark);
+  --ambient-light: var(--morning-light);
+}
+
+/* Reset and iOS safe scaling constraints */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body, html {
+  width: 100%;
+  height: 100vh;
+  /* iOS fix for viewport height changes with navigation bar showing/hiding */
+  height: -webkit-fill-available;
+  overflow: hidden;
+  position: relative;
+  background: #2d3436;
+  color: var(--text-dark);
+  /* Disable dragging and text selection on iOS for native app feel */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* Ensure touch targets have no grey highlight on iOS tap */
+a, button, div, span, svg {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   SKY BACKGROUND & WEATHER MODES
+   ========================================================================== */
+.sky-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%; /* Occupies top 60% of screen */
+  z-index: 0;
+  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+  transition: background 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+}
+
+/* Sky Overlay for Ambient Light Glow */
+.sky-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ambient-light);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  transition: background 1.5s ease;
+}
+
+/* Sun/Moon rendering */
+.sun-moon {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 1.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+}
+
+/* Cloud particles */
+.clouds-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 100px;
+  opacity: 0.8;
+  filter: blur(1px);
+}
+
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+}
+
+.cloud-1 {
+  width: 100px;
+  height: 35px;
+  top: 15%;
+  left: -120px;
+  animation: floatCloud 32s linear infinite;
+}
+.cloud-1::before { width: 45px; height: 45px; top: -20px; left: 15px; }
+.cloud-1::after { width: 35px; height: 35px; top: -12px; left: 45px; }
+
+.cloud-2 {
+  width: 130px;
+  height: 42px;
+  top: 30%;
+  left: -150px;
+  animation: floatCloud 24s linear infinite;
+  animation-delay: 6s;
+  opacity: 0.7;
+}
+.cloud-2::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+.cloud-2::after { width: 45px; height: 45px; top: -18px; left: 65px; }
+
+.cloud-3 {
+  width: 80px;
+  height: 28px;
+  top: 8%;
+  left: -100px;
+  animation: floatCloud 45s linear infinite;
+  animation-delay: 12s;
+  opacity: 0.9;
+}
+.cloud-3::before { width: 35px; height: 35px; top: -15px; left: 10px; }
+.cloud-3::after { width: 25px; height: 25px; top: -8px; left: 35px; }
+
+/* Twinkling Stars for Night Sky */
+.night-stars {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(1.5px 1.5px at 15px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 80px 120px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 150px 50px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 220px 200px, #f5cd79, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 290px 80px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2.5px 2.5px at 340px 150px, #ffffff, rgba(0,0,0,0));
+  background-size: 380px 280px;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+}
+
+/* Dynamic Classes added via JS for Weather */
+.weather-morning .sun-moon {
+  background: #ffb8b8;
+  bottom: 15%;
+  left: 20%;
+  box-shadow: 0 0 35px #f78fb3;
+}
+.weather-morning .night-stars { opacity: 0; }
+
+.weather-sunny .sun-moon {
+  background: #ffd32c;
+  bottom: 65%;
+  left: 75%;
+  box-shadow: 0 0 45px #f5cd79;
+}
+.weather-sunny .night-stars { opacity: 0; }
+
+.weather-sunset .sun-moon {
+  background: #ff7675;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 0 50px #ff7675;
+}
+.weather-sunset .night-stars { opacity: 0.15; }
+
+.weather-night .sun-moon {
+  background: transparent;
+  bottom: 50%;
+  left: 70%;
+  box-shadow: inset 16px -16px 0 0 #f5f6fa; /* Silver Crescent Moon */
+}
+.weather-night .night-stars { opacity: 1; }
+
+/* ==========================================================================
+   INTERACTIVE CANVAS (GRASS & PETALS)
+   ========================================================================== */
+#meadowCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Sits above sky, below overlay UI */
+  display: block;
+}
+
+/* Touch Wind Overlay Hint */
+.wind-overlay {
+  position: absolute;
+  top: 42%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.wind-hint {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  animation: pulseHint 4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   COZY SIGNPOST & ANNIVERSARY TIMER
+   ========================================================================== */
+.signpost {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+  width: 280px;
+  max-width: 85vw;
+}
+
+.signpost-board {
+  width: 100%;
+  background: linear-gradient(135deg, var(--wood-light), #be7a4d);
+  border: 3px solid var(--wood-border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  color: var(--text-light);
+  text-shadow: 1px 1px 2px var(--wood-border);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.25);
+  position: relative;
+}
+
+.sign-board-top {
+  margin-bottom: -2px;
+  border-radius: 8px 8px 4px 4px;
+  transform: rotate(-1.5deg);
+  z-index: 3;
+}
+.sign-board-top h2 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+.sign-board-main {
+  border-radius: 4px 4px 8px 8px;
+  transform: rotate(1deg);
+  z-index: 2;
+  padding: 12px 6px;
+}
+
+.timer-display {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.time-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-val {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.time-lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Signpost customizer dropdown */
+.date-customizer {
+  width: 90%;
+  margin-top: 6px;
+  z-index: 4;
+}
+
+.customizer-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+.customizer-btn:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.customizer-panel {
+  display: none;
+  background: #fdfaf6;
+  border: 2px solid var(--wood-border);
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 4px;
+  color: var(--text-dark);
+  font-size: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: left;
+}
+.customizer-panel.show {
+  display: block;
+  animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.customizer-panel label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.date-picker-input {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.signpost-post {
+  width: 16px;
+  height: 50px;
+  background: linear-gradient(to right, var(--wood-dark), #5a3114);
+  border-left: 2px solid var(--wood-border);
+  border-right: 2px solid var(--wood-border);
+  z-index: 1;
+}
+
+/* ==========================================================================
+   MAILBOX SYSTEM
+   ========================================================================== */
+.mailbox-wrapper {
+  position: relative;
+  cursor: pointer;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mailbox-wrapper:active {
+  transform: scale(0.9);
+}
+
+.mailbox-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.mailbox-flag {
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  width: 6px;
+  height: 22px;
+  background: #ff4d4d;
+  border: 1px solid var(--wood-border);
+  border-radius: 2px;
+  transform-origin: bottom center;
+  transform: rotate(0deg);
+  transition: transform 0.5s ease;
+  z-index: 2;
+}
+.mailbox-flag::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 14px;
+  height: 10px;
+  background: #ff4d4d;
+  border-radius: 1px;
+}
+.mailbox-wrapper.unread .mailbox-flag {
+  transform: rotate(-90deg); /* Flag is raised! */
+}
+
+.mailbox-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ff4757;
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.mailbox-wrapper.unread .mailbox-badge {
+  opacity: 1;
+  transform: scale(1);
+  animation: pulseBadge 1.5s infinite;
+}
+
+.mailbox-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(2px);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-top: -6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   FLOATING UI DOCK & MUSIC
+   ========================================================================== */
+.floating-ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass to canvas */
+  z-index: 10;
+  padding: calc(15px + env(safe-area-inset-top)) calc(15px + env(safe-area-inset-right)) calc(15px + env(safe-area-inset-bottom)) calc(15px + env(safe-area-inset-left));
+}
+
+/* Enable pointer events on active elements */
+.signpost, .mailbox-wrapper, .music-toggle {
+  pointer-events: auto;
+}
+
+/* Reposition components specifically */
+.signpost {
+  position: absolute;
+  top: calc(15px + env(safe-area-inset-top));
+  left: calc(15px + env(safe-area-inset-left));
+}
+
+.mailbox-wrapper {
+  position: absolute;
+  bottom: calc(150px + env(safe-area-inset-bottom));
+  right: calc(18px + env(safe-area-inset-right));
+}
+
+/* Spinning Windmill Music Toggle button */
+.music-toggle {
+  position: absolute;
+  top: calc(15px + env(safe-area-inset-top));
+  right: calc(15px + env(safe-area-inset-right));
+  width: 50px;
+  height: 60px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.windmill-stand {
+  width: 4px;
+  height: 25px;
+  background: #bdc5c9;
+  border-radius: 2px;
+  position: absolute;
+  bottom: 0;
+}
+
+.windmill-blades {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spinWindmill 8s linear infinite; /* Idle rotation */
+  transform-origin: center center;
+}
+
+.music-toggle.playing .windmill-blades {
+  animation: spinWindmill 2s linear infinite; /* Playing faster! */
+}
+
+.blade {
+  position: absolute;
+  width: 4px;
+  height: 16px;
+  background: #fff;
+  border-radius: 2px;
+  border: 1px solid #74b9ff;
+  transform-origin: bottom center;
+  bottom: 50%;
+}
+.blade-1 { transform: rotate(0deg); }
+.blade-2 { transform: rotate(90deg); }
+.blade-3 { transform: rotate(180deg); }
+.blade-4 { transform: rotate(270deg); }
+
+/* Center pin */
+.windmill-blades::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ff7675;
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   ANIMALS LAYER
+   ========================================================================== */
+.animals-container {
+  position: absolute;
+  bottom: 20%; /* Ground height area */
+  left: 0;
+  width: 100%;
+  height: 110px;
+  z-index: 5; /* Above canvas, below HUD */
+  pointer-events: none;
+}
+
+.animal-wrapper {
+  position: absolute;
+  width: 75px;
+  height: 60px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.15s ease;
+}
+
+.animal-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.08));
+}
+
+.sheep-wrapper {
+  left: 20%;
+  bottom: 10px;
+}
+
+.bunny-wrapper {
+  right: 22%;
+  bottom: 25px;
+}
+
+/* Jumping actions classes */
+.animal-wrapper.jump {
+  animation: animalHop 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Leg wiggle during jump */
+.animal-wrapper.jump .leg-1, .animal-wrapper.jump .leg-3 {
+  animation: legWiggleLeft 0.5s ease;
+}
+.animal-wrapper.jump .leg-2, .animal-wrapper.jump .leg-4 {
+  animation: legWiggleRight 0.5s ease;
+}
+
+/* Ear wiggle for bunny */
+.bunny-wrapper.wiggle .bunny-ears {
+  animation: earWiggle 0.4s ease 2;
+}
+
+/* Dialog bubble styling */
+.animal-bubble {
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: white;
+  border: 2px solid var(--wood-border);
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  white-space: nowrap;
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  z-index: 6;
+  max-width: 180px;
+}
+.animal-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+.animal-bubble::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: var(--wood-border) transparent transparent transparent;
+  margin-top: 1px;
+  z-index: -1;
+}
+
+.animal-bubble.show {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   WEATHER & TIME OF DAY SELECTOR
+   ========================================================================== */
+.weather-hud {
+  position: absolute;
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 35px;
+  padding: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  width: 280px;
+  justify-content: space-between;
+}
+
+.weather-btn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.weather-btn span {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.weather-btn.active {
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: scale(1.1);
+}
+.weather-btn.active span {
+  opacity: 1;
+}
+.weather-btn:active {
+  transform: scale(0.9);
+}
+
+/* ==========================================================================
+   VIRTUAL GARDENING DOCK
+   ========================================================================== */
+.garden-hud-container {
+  position: absolute;
+  bottom: calc(85px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: 350px;
+  max-width: 92vw;
+  z-index: 15;
+}
+
+.garden-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid var(--card-border);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.garden-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #57606f;
+  letter-spacing: 0.5px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 4px;
+}
+
+.seed-selector {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.seed-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2.5px solid transparent;
+  border-radius: 12px;
+  padding: 6px 2px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.25s ease;
+}
+
+.seed-icon {
+  font-size: 1.1rem;
+}
+
+.seed-name {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.seed-btn.active {
+  background: white;
+  border-color: #ffd32c;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.garden-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.action-info {
+  font-size: 0.7rem;
+  color: #57606f;
+  flex: 1;
+  line-height: 1.2;
+}
+
+.action-info strong {
+  color: #ff7675;
+}
+
+.watering-btn {
+  background: #74b9ff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: white;
+  box-shadow: 0 3px 6px rgba(116, 185, 255, 0.3);
+  transition: all 0.2s;
+}
+
+.watering-btn.active {
+  background: #0984e3;
+  animation: wobble 0.5s ease infinite;
+}
+
+.watering-btn:active {
+  transform: scale(0.95);
+}
+
+.watering-icon {
+  font-size: 1rem;
+}
+
+.watering-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   MODALS & PORTABLE LOVE LETTERS
+   ========================================================================== */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  padding: 15px;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-container {
+  background: #fbf6ec;
+  border: 4px solid var(--wood-border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 380px; /* Exact size for iPhone screens */
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+  transform: scale(0.85);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+.modal-overlay.show .modal-container {
+  transform: scale(1);
+}
+
+.modal-header {
+  background: linear-gradient(to right, var(--wood-light), #b87b55);
+  border-bottom: 3px solid var(--wood-border);
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.modal-dots {
+  display: flex;
+  gap: 5px;
+}
+.modal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dot-red { background: #ff7675; }
+.dot-yellow { background: #feca57; }
+.dot-green { background: #1dd1a1; }
+
+.modal-header h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  margin-left: -15px;
+}
+
+.close-modal-btn {
+  background: rgba(0,0,0,0.15);
+  border: none;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.close-modal-btn:active {
+  background: rgba(0,0,0,0.3);
+}
+
+/* Horizontal scrolling tab bars inside modal */
+.mailbox-tabs {
+  display: flex;
+  background: #f1ebd9;
+  border-bottom: 2px solid var(--wood-border);
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+.mailbox-tabs::-webkit-scrollbar {
+  display: none; /* Safari/Chrome */
+}
+
+.mailbox-tab-btn {
+  flex: 1;
+  min-width: 90px;
+  background: transparent;
+  border: none;
+  padding: 10px 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #718093;
+  transition: all 0.2s;
+  text-align: center;
+  border-right: 1px solid rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+
+.mailbox-tab-btn.active {
+  background: #fbf6ec;
+  color: var(--wood-dark);
+  box-shadow: inset 0 3px 0 var(--wood-light);
+}
+
+.modal-body {
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.letter-content {
+  display: none;
+}
+.letter-content.active {
+  display: block;
+}
+
+/* Cozy Handwritten Parchment effect */
+.letter-paper {
+  background: #fffdf9;
+  border: 1px solid #efe5cc;
+  border-radius: 10px;
+  padding: 15px 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 100% 24px;
+  line-height: 24px;
+}
+
+.letter-salutation {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--wood-dark);
+  margin-bottom: 6px;
+}
+
+.letter-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.25rem;
+  color: #3f3f3f;
+  text-align: justify;
+}
+
+.letter-signature {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--wood-dark);
+  text-align: right;
+  margin-top: 15px;
+}
+
+.heart-stamp {
+  font-size: 1.8rem;
+  color: #ff7675;
+  text-align: right;
+  margin-top: -5px;
+  opacity: 0.85;
+  animation: pulseStamp 2s ease-in-out infinite;
+}
+
+/* Secret Letters Console Styling */
+.console-box {
+  background: #2d3436;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #55efc4;
+  font-family: monospace;
+  font-size: 0.75rem;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  min-height: 180px;
+}
+
+.console-line {
+  word-break: break-all;
+  white-space: pre-wrap;
+  line-height: 1.3;
+}
+.text-system { color: #a4b0be; }
+.text-warning { color: #ff7675; }
+.text-hint { color: #ffeaa7; font-style: italic; }
+
+.decryption-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.console-input {
+  flex: 1;
+  background: #353b48;
+  border: 1px solid #55efc4;
+  border-radius: 4px;
+  color: white;
+  padding: 6px;
+  font-size: 0.8rem;
+  font-family: monospace;
+  outline: none;
+}
+.console-textarea {
+  min-height: 60px;
+  resize: none;
+}
+
+.console-submit-btn {
+  background: #55efc4;
+  border: none;
+  color: #2d3436;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: monospace;
+}
+.console-submit-btn:active {
+  background: #00cec9;
+}
+
+.console-result {
+  margin-top: 8px;
+  color: #fff;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+  padding-top: 8px;
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  display: none;
+}
+.console-result.show {
+  display: block;
+}
+
+.accordion-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #0984e3;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+/* ==========================================================================
+   FLOWER GROWING / SEED POPUPS & CONFETTI
+   ========================================================================== */
+.flower-popover {
+  position: absolute;
+  background: white;
+  border: 2px solid var(--wood-border);
+  border-radius: 12px;
+  padding: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  z-index: 50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  text-align: center;
+  max-width: 140px;
+  pointer-events: none;
+  transform: translate(-50%, -100%) scale(0.8);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.flower-popover::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+.flower-popover.show {
+  transform: translate(-50%, -100%) scale(1);
+  opacity: 1;
+}
+
+/* Floating blossom petal animation effects */
+.petal-particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+  border-radius: 100% 0 100% 100%; /* Petal shape */
+  transform-origin: center center;
+}
+
+.floating-heart {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  font-size: 1.2rem;
+  animation: floatHeartUp 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* ==========================================================================
+   ANIMATIONS & KEYFRAMES
+   ========================================================================== */
+@keyframes floatCloud {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw + 300px)); }
+}
+
+@keyframes spinWindmill {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes animalHop {
+  0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+  40% { transform: translateY(-45px) scaleX(0.95) scaleY(1.1); }
+  75% { transform: translateY(5px) scaleX(1.05) scaleY(0.9); }
+}
+
+@keyframes earWiggle {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-8deg); }
+  70% { transform: rotate(8deg); }
+}
+
+@keyframes legWiggleLeft {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(20deg); }
+}
+@keyframes legWiggleRight {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(-20deg); }
+}
+
+@keyframes floatHeartUp {
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
+  15% { transform: translate(-50%, -20px) scale(1.1); opacity: 1; }
+  100% { transform: translate(calc(-50% + (var(--dirX) * 35px)), -75px) scale(0.7); opacity: 0; }
+}
+
+@keyframes pulseHint {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.03); opacity: 1; }
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes pulseStamp {
+  0%, 100% { transform: scale(1) rotate(-10deg); }
+  50% { transform: scale(1.08) rotate(-5deg); }
+}
+
+@keyframes slideDown {
+  0% { transform: scaleY(0); transform-origin: top center; opacity: 0; }
+  100% { transform: scaleY(1); transform-origin: top center; opacity: 1; }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+/* ==========================================================================
+   IPHONE NOTCH & VIEWPORT SPECIFIC OVERRIDES
+   ========================================================================== */
+/* Landscape safe area checks for iPhones */
+@media screen and (max-aspect-ratio: 1/1) {
+  /* Vertical Mobile screens (iPhone 11 & 13) */
+  .floating-ui {
+    height: 100%;
+  }
+}
+
+/* Adjust sizes for smaller screens */
+@media screen and (max-width: 360px) {
+  .signpost {
+    width: 250px;
+  }
+  .time-val {
+    font-size: 1.25rem;
+  }
+  .garden-hud-container {
+    width: 95vw;
+  }
+  .seed-btn {
+    padding: 4px 1px;
+  }
+  .seed-icon {
+    font-size: 1rem;
+  }
+  .seed-name {
+    font-size: 0.55rem;
+  }
+  .weather-hud {
+    width: 260px;
+  }
+  .weather-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+  }
+}

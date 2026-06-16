@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <!-- Optimized viewport for mobile notches and safe areas on iPhone 11 and 13 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Padang Rumput Cinta Kita - Tempat istirahat manis penuh bunga, kelinci melompat, surat cinta, dan angin sepoi-sepoi khusus untukmu.">
+  <title>Padang Rumput Cinta Kita 🍀🌸</title>
+  
+  <!-- Premium Playful and Cute Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@300..700&family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sky and Environment Container -->
+  <div class="sky-container" id="skyBg">
+    <div class="sun-moon" id="sunMoon"></div>
+    <div class="clouds-layer" id="cloudsLayer">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+    </div>
+    <div class="night-stars" id="nightStars"></div>
+  </div>
+
+  <!-- Interactive HTML5 Canvas for Grass and Falling Petals -->
+  <canvas id="meadowCanvas"></canvas>
+
+  <!-- Interactive Wind Overlay (Touch Guide) -->
+  <div class="wind-overlay" id="windOverlay">
+    <span class="wind-hint">Geser layar ke kiri/kanan untuk tiupan angin! 🍃</span>
+  </div>
+
+  <!-- Background Music Controller (Styled as a spinning Windmill) -->
+  <button class="music-toggle" id="musicBtn" aria-label="Nyalakan Musik Cozy" title="Nyalakan Musik Cozy">
+    <div class="windmill-stand"></div>
+    <div class="windmill-blades" id="windmillBlades">
+      <div class="blade blade-1"></div>
+      <div class="blade blade-2"></div>
+      <div class="blade blade-3"></div>
+      <div class="blade blade-4"></div>
+    </div>
+  </button>
+
+  <!-- Floating UI Components Container -->
+  <div class="floating-ui">
+    
+    <!-- Cozy Wooden Signpost showing Dating Counter -->
+    <div class="signpost" id="dateSignpost">
+      <div class="signpost-board sign-board-top">
+        <h2>ORBIT KITA BERSAMA 💖</h2>
+      </div>
+      <div class="signpost-board sign-board-main">
+        <div class="timer-display">
+          <div class="time-segment">
+            <span class="time-val" id="time-days">0</span>
+            <span class="time-lbl">Hari</span>
+          </div>
+          <div class="time-segment">
+            <span class="time-val" id="time-hours">0</span>
+            <span class="time-lbl">Jam</span>
+          </div>
+          <div class="time-segment">
+            <span class="time-val" id="time-mins">0</span>
+            <span class="time-lbl">Menit</span>
+          </div>
+          <div class="time-segment">
+            <span class="time-val" id="time-secs">0</span>
+            <span class="time-lbl">Detik</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Foldable Date customizer -->
+      <div class="date-customizer" id="dateCustomizer">
+        <button class="customizer-btn" id="customizerToggleBtn">Atur Tanggal Jadian ⚙️</button>
+        <div class="customizer-panel" id="customizerPanel">
+          <label for="anniversary-date">Pilih tanggal awal jadian kita:</label>
+          <input type="date" id="anniversary-date" class="date-picker-input">
+        </div>
+      </div>
+      <div class="signpost-post"></div>
+    </div>
+
+    <!-- Mailbox for Secret Letters -->
+    <div class="mailbox-wrapper" id="loveMailbox" onclick="openMailbox()">
+      <div class="mailbox-flag" id="mailboxFlag"></div>
+      <svg class="mailbox-svg" viewBox="0 0 100 100">
+        <!-- Wooden/Cute Mailbox Post -->
+        <rect x="46" y="70" width="8" height="30" rx="3" fill="#8d5b4c" />
+        <!-- Mailbox Body -->
+        <rect x="25" y="25" width="50" height="45" rx="15" fill="#f8a5c2" stroke="#e66767" stroke-width="3" />
+        <!-- Mailbox Door Front -->
+        <ellipse cx="75" cy="47.5" rx="8" ry="22.5" fill="#f5cd79" stroke="#e66767" stroke-width="3" />
+        <!-- Cute Heart Mark -->
+        <path d="M50 42 C50 42, 47 38, 45 38 C43.5 38, 42 39.5, 42 41.5 C42 44, 50 48, 50 48 C50 48, 58 44, 58 41.5 C58 39.5, 56.5 38, 55 38 C53 38, 50 42, 50 42 Z" fill="#cf6a87" />
+        <!-- Mailbox Opening Handle -->
+        <circle cx="79" cy="47" r="3" fill="#cf6a87" />
+      </svg>
+      <div class="mailbox-badge" id="mailboxBadge">1</div>
+      <div class="mailbox-label">Kotak Surat 📮</div>
+    </div>
+
+  </div>
+
+  <!-- Interactive Animals Container (Posisi di atas Canvas) -->
+  <div class="animals-container">
+    
+    <!-- Fluffy Sheep (Domba) -->
+    <div class="animal-wrapper sheep-wrapper" id="sheep" onclick="triggerAnimal('sheep')">
+      <!-- Animal Speech bubble -->
+      <div class="animal-bubble" id="sheepBubble">Mbee~ Tab aku untuk lompat! 🐏💕</div>
+      <svg class="animal-svg" viewBox="0 0 100 80">
+        <!-- Legs -->
+        <rect class="leg leg-1" x="35" y="55" width="6" height="15" rx="3" fill="#2d3436" />
+        <rect class="leg leg-2" x="45" y="55" width="6" height="15" rx="3" fill="#2d3436" />
+        <rect class="leg leg-3" x="55" y="55" width="6" height="15" rx="3" fill="#2d3436" />
+        <rect class="leg leg-4" x="65" y="55" width="6" height="15" rx="3" fill="#2d3436" />
+        <!-- Fluffy Body (Clouds) -->
+        <circle cx="40" cy="40" r="16" fill="#f5f6fa" />
+        <circle cx="50" cy="32" r="18" fill="#f5f6fa" />
+        <circle cx="60" cy="40" r="16" fill="#f5f6fa" />
+        <circle cx="50" cy="48" r="16" fill="#f5f6fa" />
+        <circle cx="42" cy="46" r="14" fill="#f5f6fa" />
+        <circle cx="58" cy="46" r="14" fill="#f5f6fa" />
+        <!-- Head -->
+        <ellipse cx="28" cy="36" rx="10" ry="8" fill="#ffeaa7" />
+        <!-- Ears -->
+        <ellipse class="ear-left" cx="24" cy="28" rx="3" ry="6" fill="#ffeaa7" transform="rotate(-30 24 28)" />
+        <ellipse class="ear-right" cx="32" cy="28" rx="3" ry="6" fill="#ffeaa7" transform="rotate(30 32 28)" />
+        <!-- Face Details -->
+        <!-- Eyes ^ ^ -->
+        <path d="M22 35 Q24 33 25 35" fill="none" stroke="#2d3436" stroke-width="2" stroke-linecap="round" />
+        <path d="M29 35 Q30 33 31 35" fill="none" stroke="#2d3436" stroke-width="2" stroke-linecap="round" />
+        <!-- Pink Cheeks -->
+        <circle cx="21" cy="39" r="2" fill="#ff7675" />
+        <circle cx="31" cy="39" r="2" fill="#ff7675" />
+        <!-- Small smile -->
+        <path d="M25 39 Q26.5 40.5 28 39" fill="none" stroke="#2d3436" stroke-width="1.5" stroke-linecap="round" />
+        <!-- Fluffy Hair on top of head -->
+        <circle cx="28" cy="28" r="5" fill="#f5f6fa" />
+        <circle cx="24" cy="30" r="3" fill="#f5f6fa" />
+        <circle cx="32" cy="30" r="3" fill="#f5f6fa" />
+      </svg>
+    </div>
+
+    <!-- Cute Bunny (Kelinci) -->
+    <div class="animal-wrapper bunny-wrapper" id="bunny" onclick="triggerAnimal('bunny')">
+      <div class="animal-bubble" id="bunnyBubble">Hop! Aku kelinci penunggu rumput! 🐰🥕</div>
+      <svg class="animal-svg" viewBox="0 0 100 80">
+        <!-- Feet -->
+        <ellipse class="leg leg-1" cx="42" cy="65" rx="5" ry="3" fill="#f5f6fa" stroke="#e2ebf0" stroke-width="1" />
+        <ellipse class="leg leg-2" cx="58" cy="65" rx="5" ry="3" fill="#f5f6fa" stroke="#e2ebf0" stroke-width="1" />
+        <!-- Fluffy Tail -->
+        <circle cx="68" cy="54" r="6" fill="#f5f6fa" />
+        <!-- Bunny Body -->
+        <ellipse cx="50" cy="50" rx="16" ry="18" fill="#f5f6fa" />
+        <!-- Bunny Head -->
+        <circle cx="44" cy="30" r="12" fill="#f5f6fa" />
+        <!-- Long Ears -->
+        <g class="bunny-ears">
+          <ellipse class="bunny-ear-left" cx="39" cy="14" rx="3.5" ry="12" fill="#f5f6fa" transform="rotate(-5 39 14)">
+            <!-- Inner Pink Ear -->
+            <ellipse cx="39" cy="14" rx="1.8" ry="9" fill="#ffb8b8" />
+          </ellipse>
+          <ellipse class="bunny-ear-right" cx="49" cy="14" rx="3.5" ry="12" fill="#f5f6fa" transform="rotate(5 49 14)">
+            <ellipse cx="49" cy="14" rx="1.8" ry="9" fill="#ffb8b8" />
+          </ellipse>
+        </g>
+        <!-- Face Details -->
+        <!-- Eyes -->
+        <circle cx="39" cy="28" r="1.5" fill="#2d3436" />
+        <circle cx="47" cy="28" r="1.5" fill="#2d3436" />
+        <!-- Cheeks -->
+        <circle cx="36" cy="32" r="1.8" fill="#ffb8b8" />
+        <circle cx="49" cy="32" r="1.8" fill="#ffb8b8" />
+        <!-- Nose and mouth -->
+        <polygon points="43,30 44,31.5 42,31.5" fill="#ff7675" />
+        <path d="M42 32.5 Q43 33.5 44 32.5" fill="none" stroke="#2d3436" stroke-width="1" stroke-linecap="round" />
+        <!-- Cute Ribbon Badge -->
+        <circle cx="50" cy="40" r="3" fill="#ff7675" />
+        <path d="M47 38 L53 42" stroke="#ff7675" stroke-width="2" />
+        <path d="M53 38 L47 42" stroke="#ff7675" stroke-width="2" />
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- HUD: Gardening controls & Plant Seed Picker (Taman Bunga Kita) -->
+  <div class="garden-hud-container">
+    <div class="garden-panel">
+      <div class="garden-title">Taman Bunga Kita 🌱🌻</div>
+      <div class="seed-selector">
+        <button class="seed-btn active" id="seed-tulip" onclick="selectSeed('tulip')" data-seed="tulip" title="Mawar Cinta">
+          <span class="seed-icon">🌷</span>
+          <span class="seed-name">Tulip Cinta</span>
+        </button>
+        <button class="seed-btn" id="seed-daisy" onclick="selectSeed('daisy')" data-seed="daisy" title="Daisy Ceria">
+          <span class="seed-icon">🌼</span>
+          <span class="seed-name">Daisy Ceria</span>
+        </button>
+        <button class="seed-btn" id="seed-lavender" onclick="selectSeed('lavender')" data-seed="lavender" title="Lavender Tenang">
+          <span class="seed-icon">🪻</span>
+          <span class="seed-name">Lavender Damai</span>
+        </button>
+        <button class="seed-btn" id="seed-clover" onclick="selectSeed('clover')" data-seed="clover" title="Semanggi Keberuntungan">
+          <span class="seed-icon">🍀</span>
+          <span class="seed-name">Semanggi 4 Daun</span>
+        </button>
+      </div>
+      
+      <div class="garden-actions">
+        <div class="action-info" id="gardenInstructions">
+          Ketuk area kosong di rumput untuk menanam benih <strong>Tulip Cinta</strong>!
+        </div>
+        <button class="watering-btn" id="wateringBtn" onclick="toggleWateringCan()" title="Siram Tanaman">
+          <span class="watering-icon">🚿</span>
+          <span class="watering-label">Siram Bunga</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD: Weather & Time of Day Changer (Waktu & Cuaca) -->
+  <div class="weather-hud">
+    <button class="weather-btn active" onclick="setWeather('morning')" id="w-morning" title="Pagi Segar">🌅 <span>Pagi</span></button>
+    <button class="weather-btn" onclick="setWeather('sunny')" id="w-sunny" title="Siang Hangat">☀️ <span>Siang</span></button>
+    <button class="weather-btn" onclick="setWeather('sunset')" id="w-sunset" title="Sore Romantis">🌇 <span>Sore</span></button>
+    <button class="weather-btn" onclick="setWeather('night')" id="w-night" title="Malam Indah">🌌 <span>Malam</span></button>
+  </div>
+
+  <!-- MODAL: Cozy Mailbox / Love Letters -->
+  <div class="modal-overlay" id="mailboxModal">
+    <div class="modal-container">
+      
+      <div class="modal-header">
+        <div class="modal-dots">
+          <span class="modal-dot dot-red"></span>
+          <span class="modal-dot dot-yellow"></span>
+          <span class="modal-dot dot-green"></span>
+        </div>
+        <h3>Kotak Surat Cinta Kita 📮💌</h3>
+        <button class="close-modal-btn" onclick="closeMailbox()">&times;</button>
+      </div>
+
+      <div class="mailbox-tabs">
+        <button class="mailbox-tab-btn active" onclick="switchMailTab('letter1')">Buka Saat Kangen 🥺</button>
+        <button class="mailbox-tab-btn" onclick="switchMailTab('letter2')">Buka Saat Sedih 😢</button>
+        <button class="mailbox-tab-btn" onclick="switchMailTab('letter3')">Buka Saat Gemes 🥰</button>
+        <button class="mailbox-tab-btn" onclick="switchMailTab('letter4')">Pesan Rahasia 🔑</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- LETTER 1: KANGEN -->
+        <div class="letter-content active" id="mail-letter1">
+          <div class="letter-paper">
+            <p class="letter-salutation">Untuk Sayangku tercinta,</p>
+            <p class="letter-text">
+              Halo Manis! Kalau kamu lagi buka surat ini, pasti kamu lagi kangen ya sama aku? Hehe, tos dulu! Aku juga selalu kangen sama kamu setiap detik.<br><br>
+              Meskipun kadang kita gak bisa ketemu langsung tiap saat, ingat ya kalau separuh hatiku selalu ada di kantongmu. Bayangin aja padang rumput ini luas banget, tapi sehelai rumput pun gak ada yang bisa menandingi indahnya senyuman kamu.<br><br>
+              Tarik napas dalam-dalam, senyum sedikit, dan bayangkan aku lagi meluk kamu erat-erat sekarang. <i>I miss you so much, sweetie!</i> 💖
+            </p>
+            <p class="letter-signature">Dari pacar yang selalu kangen kamu,</p>
+            <div class="heart-stamp">❤</div>
+          </div>
+        </div>
+
+        <!-- LETTER 2: SEDIH -->
+        <div class="letter-content" id="mail-letter2">
+          <div class="letter-paper">
+            <p class="letter-salutation">Sayangku yang manis,</p>
+            <p class="letter-text">
+              Hei, ada apa? Hari ini terasa berat ya buat kamu? Gak apa-apa kok kalau merasa lelah atau sedih. Ingat ya, kamu itu orang yang sangat hebat dan berharga.<br><br>
+              Kalau duniaku lagi mendung, melihat kamu aja udah cukup buat menerangi semuanya. Jadi, kalau hari ini duniamu yang lagi mendung, biarkan aku yang jadi payung buatmu.<br><br>
+              Istirahat yang cukup ya hari ini. Jangan dipaksa berpikir terlalu keras. Besok matahari di padang rumput ini bakal terbit lagi, membawa kehangatan baru buat kita berdua. Aku selalu ada di sampingmu untuk mendukungmu apa pun yang terjadi. Semangat ya sayangku! 💪💕
+            </p>
+            <p class="letter-signature">Sandaran ternyamanmu,</p>
+            <div class="heart-stamp">❤</div>
+          </div>
+        </div>
+
+        <!-- LETTER 3: GEMES -->
+        <div class="letter-content" id="mail-letter3">
+          <div class="letter-paper">
+            <p class="letter-salutation">Hai Anak Kecil yang Bikin Gemes!</p>
+            <p class="letter-text">
+              Aaaaaa! Aku cuma mau nulis surat ini buat bilang kalau kamu itu gemesin banget! Kenapa sih bisa ada orang selucu kamu di bumi ini? Rasanya pengen aku cubit pipinya sampai melebar! 🫨<br><br>
+              Tiap kali ngelihat kamu ketawa, rasanya kayak ngelihat anak domba lagi lompat-lompat kegirangan di atas rumput segar—lucu banget! Terima kasih ya udah jadi manusia paling manis yang selalu sukses bikin hari-hariku penuh warna pastel.<br><br>
+              Jangan pernah bosan jadi orang yang lucu dan menggemaskan ya. Awas pipinya aku cubit kalau ketemu! Mwah! 😘
+            </p>
+            <p class="letter-signature">Pencubit Pipi Profesionalmu,</p>
+            <div class="heart-stamp">❤</div>
+          </div>
+        </div>
+
+        <!-- LETTER 4: PESAN RAHASIA DEKRIPSI (THEMED CLOVER DECRYPTION) -->
+        <div class="letter-content" id="mail-letter4">
+          <div class="console-box">
+            <div class="console-line text-system">SYSTEM: Mendeteksi sinyal rahasia dari semanggi empat daun...</div>
+            <div class="console-line text-warning">SYSTEM: Pesan ini terenkripsi. Masukkan Kata Sandi Dekripsi!</div>
+            <div class="console-line text-hint">Petunjuk: Panggilan kesayanganmu ke aku / nama pacarmu (contoh: sayang, manis, cantik, nana).</div>
+            
+            <form id="decryptForm" class="decryption-form" onsubmit="handleLetterDecryption(event)">
+              <input type="text" id="decryptKey" class="console-input" placeholder="Ketik kata sandi..." autocomplete="off">
+              <button type="submit" class="console-submit-btn">Buka Kunci</button>
+            </form>
+            
+            <div class="console-result" id="decryptOutput"></div>
+          </div>
+          
+          <!-- Generator form inside secret tab to let them generate a custom link too! -->
+          <div class="encrypt-box" style="margin-top: 15px; padding-top:15px; border-top:1px dashed #dcdde1;">
+            <p style="font-size:0.85rem; color:#636e72; margin-bottom:8px;">💡 Ingin buat surat rahasia versimu sendiri untuknya?</p>
+            <button class="accordion-toggle-btn" id="toggleEncryptFormBtn" onclick="toggleEncryptSection()">Buat Transmisi Rahasia ⚙️</button>
+            
+            <div class="encrypt-fields" id="encryptFieldsSection" style="display:none; margin-top:10px; flex-direction:column; gap:8px;">
+              <input type="text" id="customKey" class="console-input" placeholder="Tentukan kata sandi penerima...">
+              <textarea id="customMessage" class="console-input console-textarea" placeholder="Tulis pesan cinta rahasiamu di sini..."></textarea>
+              <button class="console-submit-btn" onclick="generateSecretLetterLink()" style="background:#55efc4; color:#2d3436;">Buat & Salin Tautan</button>
+              <div class="console-line" id="encryptLinkResult" style="color: #0984e3; word-break: break-all; margin-top:8px; font-size:0.8rem; display:none;"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
