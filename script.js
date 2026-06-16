@@ -2,7 +2,7 @@
 // GLOBAL STATE & SYSTEM INITIALIZATION
 // ==========================================================================
 
-let activeWeather = 'morning';
+let activeWeather = ''; // Starts empty to force initial setWeather call to execute
 let activeSeed = 'tulip';
 let wateringMode = false;
 let isPlayingAudio = false;
@@ -27,7 +27,7 @@ let lettersUnread = true;
 // ==========================================================================
 // SYSTEM ENTRY POINT
 // ==========================================================================
-window.addEventListener('DOMContentLoaded', () => {
+function initializeWebsite() {
   // Load anniversary date from storage or write default
   const storedDate = localStorage.getItem("meadow_love_date");
   if (storedDate) {
@@ -41,6 +41,15 @@ window.addEventListener('DOMContentLoaded', () => {
   // Bind UI control listeners
   setupEventListeners();
   
+  // Initialize weather (so sky gradients, sun/moon, and buttons active classes are set up)
+  setWeather('morning');
+  
+  // Initialize mailbox unread state (raises flag, shows badge)
+  if (lettersUnread) {
+    const mBox = document.getElementById('loveMailbox');
+    if (mBox) mBox.classList.add('unread');
+  }
+  
   // Parse any base64 shared letter from URL
   parseSharedLetterURL();
   
@@ -50,7 +59,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // Start the timers
   updateAnniversaryTimer();
   setInterval(updateAnniversaryTimer, 1000);
-});
+}
+
+// Check document state for immediate or delayed load trigger (safeguard for mobile Safari)
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initializeWebsite);
+} else {
+  initializeWebsite();
+}
 
 // Unlock Web Audio API on first mobile interaction
 function unlockAudio() {
@@ -330,10 +346,14 @@ function saveGardenState() {
 function getFlowerAt(clickX, clickY) {
   // Check collision circle
   const hitRadius = 24;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
   for (let i = 0; i < gardenFlowers.length; i++) {
     const fl = gardenFlowers[i];
-    const dx = clickX - fl.x;
-    const dy = clickY - fl.y;
+    const fx = fl.xPct !== undefined ? fl.xPct * width : fl.x;
+    const fy = fl.yPct !== undefined ? fl.yPct * height : fl.y;
+    const dx = clickX - fx;
+    const dy = clickY - fy;
     if (Math.sqrt(dx*dx + dy*dy) < hitRadius) {
       return fl;
     }
@@ -348,9 +368,14 @@ function plantSeed(x, y) {
     gardenFlowers.shift();
   }
   
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  
   const newFlower = {
     id: Date.now() + Math.random(),
-    x: x,
+    xPct: x / width,
+    yPct: y / height,
+    x: x, // Keep for backward-compatibility in case percentage fails
     y: y,
     type: activeSeed,
     growth: 0, // 0 = seed, 1 = sprout, 2 = bud, 3 = fully bloomed
@@ -372,17 +397,20 @@ function plantSeed(x, y) {
 
 // Water flower action
 function waterFlower(flower) {
+  const fx = flower.xPct !== undefined ? flower.xPct * window.innerWidth : flower.x;
+  const fy = flower.yPct !== undefined ? flower.yPct * window.innerHeight : flower.y;
+  
   if (flower.growth >= 3) {
     // Already fully grown! Just trigger a sparkle
     playWaterSplashSound();
-    spawnWaterParticles(flower.x, flower.y);
+    spawnWaterParticles(fx, fy);
     showFlowerPopover(flower);
     return;
   }
   
   flower.wateredCount++;
   playWaterSplashSound();
-  spawnWaterParticles(flower.x, flower.y);
+  spawnWaterParticles(fx, fy);
   
   // Increment growth stage
   flower.growth++;
@@ -392,7 +420,7 @@ function waterFlower(flower) {
   if (flower.growth === 3) {
     setTimeout(() => {
       playMagicalSparkleSound();
-      spawnSparkleParticles(flower.x, flower.y);
+      spawnSparkleParticles(fx, fy);
       showFlowerPopover(flower);
     }, 300);
   } else {
@@ -409,9 +437,12 @@ function showFlowerPopover(flower) {
   popover.className = 'flower-popover';
   popover.innerHTML = flowerTypes[flower.type].meaning;
   
+  const fx = flower.xPct !== undefined ? flower.xPct * window.innerWidth : flower.x;
+  const fy = flower.yPct !== undefined ? flower.yPct * window.innerHeight : flower.y;
+  
   // Position above the flower on screen
-  popover.style.left = `${flower.x}px`;
-  popover.style.top = `${flower.y - 30}px`;
+  popover.style.left = `${fx}px`;
+  popover.style.top = `${fy - 30}px`;
   
   document.body.appendChild(popover);
   
@@ -1270,6 +1301,7 @@ function drawGrassBlades(ctx, width, height) {
 
 function drawFlowers(ctx) {
   const width = window.innerWidth;
+  const height = window.innerHeight;
   
   gardenFlowers.forEach(flower => {
     // Smoothly scale up flowers to their growth target
@@ -1277,7 +1309,9 @@ function drawFlowers(ctx) {
     flower.scale += (targetScale - flower.scale) * 0.08;
     
     ctx.save();
-    ctx.translate(flower.x, flower.y);
+    const fx = flower.xPct !== undefined ? flower.xPct * width : flower.x;
+    const fy = flower.yPct !== undefined ? flower.yPct * height : flower.y;
+    ctx.translate(fx, fy);
     ctx.scale(flower.scale, flower.scale);
     
     // Wind bend factor
