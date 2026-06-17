@@ -60,13 +60,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body, html {
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
   width: 100%;
   height: 100vh;
   /* iOS fix for viewport height changes with navigation bar showing/hiding */
   height: -webkit-fill-available;
+  /* Dynamic viewport height: tracks the REAL visible area on mobile,
+     even while the browser address bar / in-app browser chrome is showing
+     or animating. This is what was causing the page to be taller than the
+     visible screen, pushing the garden/weather panels off-screen below an
+     empty gap that only appeared when the user scrolled. */
+  height: 100dvh;
   overflow: hidden;
-  position: relative;
+  /* Pin the body to the viewport itself instead of letting it just sit in
+     the document flow. Combined with overflow:hidden this makes the page
+     fully unscrollable, no matter how mobile browser chrome resizes things. */
+  position: fixed;
+  inset: 0;
   background: #2d3436;
   color: var(--text-dark);
   /* Disable dragging and text selection on iOS for native app feel */
@@ -84,7 +99,7 @@ a, button, div, span, svg {
    SKY BACKGROUND & WEATHER MODES
    ========================================================================== */
 .sky-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -237,7 +252,7 @@ a, button, div, span, svg {
    INTERACTIVE CANVAS (GRASS & PETALS)
    ========================================================================== */
 #meadowCanvas {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -248,7 +263,7 @@ a, button, div, span, svg {
 
 /* Touch Wind Overlay Hint */
 .wind-overlay {
-  position: absolute;
+  position: fixed;
   top: 42%;
   left: 0;
   width: 100%;
@@ -501,7 +516,7 @@ a, button, div, span, svg {
    FLOATING UI DOCK & MUSIC
    ========================================================================== */
 .floating-ui {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -599,7 +614,7 @@ a, button, div, span, svg {
    ANIMALS LAYER
    ========================================================================== */
 .animals-container {
-  position: absolute;
+  position: fixed;
   bottom: 20%; /* Ground height area */
   left: 0;
   width: 100%;
@@ -706,7 +721,7 @@ a, button, div, span, svg {
    WEATHER & TIME OF DAY SELECTOR
    ========================================================================== */
 .weather-hud {
-  position: absolute;
+  position: fixed;
   bottom: calc(20px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
@@ -762,7 +777,7 @@ a, button, div, span, svg {
    VIRTUAL GARDENING DOCK
    ========================================================================== */
 .garden-hud-container {
-  position: absolute;
+  position: fixed;
   bottom: calc(85px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
@@ -886,7 +901,7 @@ a, button, div, span, svg {
    MODALS & PORTABLE LOVE LETTERS
    ========================================================================== */
 .modal-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -978,9 +993,11 @@ a, button, div, span, svg {
 /* Horizontal scrolling tab bars inside modal */
 .mailbox-tabs {
   display: flex;
+  flex-wrap: nowrap;
   background: #f1ebd9;
   border-bottom: 2px solid var(--wood-border);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS Safari */
   scrollbar-width: none; /* Firefox */
 }
 .mailbox-tabs::-webkit-scrollbar {
@@ -988,11 +1005,10 @@ a, button, div, span, svg {
 }
 
 .mailbox-tab-btn {
-  flex: 1;
-  min-width: 90px;
+  flex: 0 0 auto; /* Prevent tabs from shrinking, maintaining text integrity */
   background: transparent;
   border: none;
-  padding: 10px 6px;
+  padding: 10px 16px; /* Added breathing room for easy tapping and layout fit */
   font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
