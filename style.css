@@ -722,7 +722,7 @@ a, button, div, span, svg {
    ========================================================================== */
 .weather-hud {
   position: fixed;
-  bottom: calc(20px + env(safe-area-inset-bottom));
+  bottom: calc(16px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
@@ -731,10 +731,10 @@ a, button, div, span, svg {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 35px;
-  padding: 6px;
+  border-radius: 22px;
+  padding: 3px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  width: 280px;
+  width: 195px;
   justify-content: space-between;
 }
 
@@ -742,9 +742,9 @@ a, button, div, span, svg {
   background: transparent;
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 1.3rem;
+  width: 32px;
+  height: 32px;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -754,10 +754,10 @@ a, button, div, span, svg {
 }
 
 .weather-btn span {
-  font-size: 0.55rem;
+  font-size: 0.4rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-top: 2px;
+  margin-top: 1px;
   opacity: 0.7;
 }
 
@@ -778,11 +778,11 @@ a, button, div, span, svg {
    ========================================================================== */
 .garden-hud-container {
   position: fixed;
-  bottom: calc(85px + env(safe-area-inset-bottom));
+  bottom: calc(58px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: 350px;
-  max-width: 92vw;
+  width: 250px;
+  max-width: 78vw;
   z-index: 15;
 }
 
@@ -791,51 +791,51 @@ a, button, div, span, svg {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 2px solid var(--card-border);
-  border-radius: 18px;
-  padding: 10px;
+  border-radius: 14px;
+  padding: 5px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .garden-title {
-  font-size: 0.75rem;
+  font-size: 0.54rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #57606f;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   text-align: center;
   border-bottom: 1px solid rgba(0,0,0,0.05);
-  padding-bottom: 4px;
+  padding-bottom: 2px;
 }
 
 .seed-selector {
   display: flex;
   justify-content: space-between;
-  gap: 4px;
+  gap: 2px;
 }
 
 .seed-btn {
   flex: 1;
   background: rgba(255, 255, 255, 0.4);
-  border: 2.5px solid transparent;
-  border-radius: 12px;
-  padding: 6px 2px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 3px 1px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   transition: all 0.25s ease;
 }
 
 .seed-icon {
-  font-size: 1.1rem;
+  font-size: 0.76rem;
 }
 
 .seed-name {
-  font-size: 0.6rem;
+  font-size: 0.42rem;
   font-weight: 700;
   color: var(--text-dark);
 }
@@ -850,15 +850,15 @@ a, button, div, span, svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-top: 2px;
+  gap: 4px;
+  margin-top: 1px;
 }
 
 .action-info {
-  font-size: 0.7rem;
+  font-size: 0.52rem;
   color: #57606f;
   flex: 1;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .action-info strong {
@@ -868,12 +868,12 @@ a, button, div, span, svg {
 .watering-btn {
   background: #74b9ff;
   border: none;
-  border-radius: 10px;
-  padding: 6px 10px;
+  border-radius: 7px;
+  padding: 4px 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   color: white;
   box-shadow: 0 3px 6px rgba(116, 185, 255, 0.3);
   transition: all 0.2s;
@@ -889,11 +889,11 @@ a, button, div, span, svg {
 }
 
 .watering-icon {
-  font-size: 1rem;
+  font-size: 0.72rem;
 }
 
 .watering-label {
-  font-size: 0.7rem;
+  font-size: 0.52rem;
   font-weight: 700;
 }
 
@@ -1308,23 +1308,23 @@ a, button, div, span, svg {
     font-size: 1.25rem;
   }
   .garden-hud-container {
-    width: 95vw;
+    width: 80vw;
   }
   .seed-btn {
-    padding: 4px 1px;
+    padding: 2px 1px;
   }
   .seed-icon {
-    font-size: 1rem;
+    font-size: 0.66rem;
   }
   .seed-name {
-    font-size: 0.55rem;
+    font-size: 0.38rem;
   }
   .weather-hud {
-    width: 260px;
+    width: 175px;
   }
   .weather-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 1.15rem;
+    width: 28px;
+    height: 28px;
+    font-size: 0.78rem;
   }
 }
